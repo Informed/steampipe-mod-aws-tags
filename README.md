@@ -1,14 +1,33 @@
-# AWS Tags Tool
+# AWS Tags Tool - Informed Customized Version
 
 An AWS tags checking tool that can be used to look for untagged resources, missing tags, resources with too many tags, and more.
 
 ![image](https://raw.githubusercontent.com/turbot/steampipe-mod-aws-tags/main/docs/aws_tags_mod_terminal.png)
 
+## Custom `interesting` benchmark for Informed.iq
+
+This Informed Customized version added a "`benchmark`" called `interesting`. It is basically the same as `mandatory` but instead of just checking for a list of tags, it also reports back some tags that are interesting in terms of helpign to determine what `Environment` a resource is part of. These elements and tags are:
+
+```csv
+title,
+'Name' as name,
+'Environnment' as nn_environ,
+'Environment' as environment,
+'TerraformWorkspace' as terraform_workspace,
+'elasticbeanstalk:environment-name' as bean_environ,
+
+```
+
+`title` is the AWS resource title and not a tag (part of the ARN)
+The rest are tags that are potentially attached to some resources. If a resource does have one or more of these tags, this script will output them as part of the resource record. Other scripts in [Informed/aws-costs](https://github.com/Informed/aws-costs) can take this data, synthesize the environment and then update the `Environment` tag for each resource in AWS.
+
+The rest of this repo is unchanged and the standard benchmarks can be used to check for drift / untagged items in the future.
+
 ## Getting started
 
 ### Installation
 
-1) Download and install Steampipe (https://steampipe.io/downloads). Or use Brew:
+1. Download and install Steampipe (https://steampipe.io/downloads). Or use Brew:
 
 ```shell
 brew tap turbot/tap
@@ -18,12 +37,14 @@ steampipe -v
 steampipe version 0.8.0
 ```
 
-2) Install the AWS plugin:
+2. Install the AWS plugin:
+
 ```shell
 steampipe plugin install aws
 ```
 
-3) Clone this repo:
+3. Clone this repo:
+
 ```sh
 git clone https://github.com/turbot/steampipe-mod-aws-tags.git
 cd steampipe-mod-aws-tags
@@ -34,21 +55,25 @@ cd steampipe-mod-aws-tags
 #### Running benchmarks
 
 Preview running all benchmarks:
+
 ```shell
 steampipe check all --dry-run
 ```
 
 Run all benchmarks:
+
 ```shell
 steampipe check all
 ```
 
 Use Steampipe introspection to view all current benchmarks:
+
 ```shell
 steampipe query "select resource_name, title, description from steampipe_benchmark;"
 ```
 
 Run an individual benchmark:
+
 ```shell
 steampipe check benchmark.untagged
 ```
@@ -56,11 +81,13 @@ steampipe check benchmark.untagged
 #### Running controls
 
 Use Steampipe introspection to view all current controls:
+
 ```shell
 steampipe query "select resource_name, title, description from steampipe_control;"
 ```
 
 Run a specific control:
+
 ```shell
 steampipe check control.s3_bucket_untagged
 ```
@@ -109,6 +136,7 @@ IFS=$OLDIFS
 ```
 
 To remove prohibited tags from EC2 instances:
+
 ```bash
 #!/bin/bash
 
@@ -136,5 +164,6 @@ If you have an idea for additional tags controls, or just want to help maintain 
 Please see the [contribution guidelines](https://github.com/turbot/steampipe/blob/main/CONTRIBUTING.md) and our [code of conduct](https://github.com/turbot/steampipe/blob/main/CODE_OF_CONDUCT.md). All contributions are subject to the [Apache 2.0 open source license](https://github.com/turbot/steampipe-mod-aws-tags/blob/main/LICENSE).
 
 `help wanted` issues:
+
 - [Steampipe](https://github.com/turbot/steampipe/labels/help%20wanted)
 - [AWS Tags Mod](https://github.com/turbot/steampipe-mod-aws-tags/labels/help%20wanted)
